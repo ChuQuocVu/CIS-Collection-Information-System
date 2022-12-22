@@ -93,7 +93,7 @@ namespace GetInformation
         // Nút bấm xóa dữ liệu trong datagridview 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            SqlCommand sqlCmd = new SqlCommand("DELETE FROM "+ textBoxTable.Text +" WHERE ID = '"+ textBoxID.Text +"'", sqlcon);
+            SqlCommand sqlCmd = new SqlCommand("DELETE FROM "+ textBoxTable.Text +" WHERE CLass_ID = '"+ textBoxID.Text +"'", sqlcon);
             sqlCmd.ExecuteNonQuery();
             loadData();
             textBoxID.Text = textBoxName.Text = "";
@@ -168,7 +168,7 @@ namespace GetInformation
             {
                 try
                 {
-                    SqlCommand sqlCmd = new SqlCommand("INSERT INTO " + textBoxTable.Text + " (Name, ID) VALUES ('" + textBoxName.Text + "', '" + textBoxID.Text + "')", sqlcon);
+                    SqlCommand sqlCmd = new SqlCommand("INSERT INTO " + textBoxTable.Text + " (Class_Name, Class_ID) VALUES ('" + textBoxName.Text + "', '" + textBoxID.Text + "')", sqlcon);
                     sqlCmd.ExecuteNonQuery();
 
                     // Đưa dữ liệu lên dataGridView             
@@ -283,8 +283,9 @@ namespace GetInformation
             comboBoxDataBit.SelectedIndex = 2;
             comboBoxParityBit.SelectedIndex = 0;
             comboBoxStopBit.SelectedIndex = 0;
-            textBoxServer.Text = @"DESKTOP-5UJC18V\SQLEXPRESS"; // Tên SQL server
-            textBoxDatabase.Text = "Management"; // Tên Database sử dụng
+            textBoxServer.Text = @"ADMIN-PC"; // Tên SQL server
+            textBoxDatabase.Text = "LnD_DataBase"; // Tên Database sử dụng
+            textBoxTable.Text = "Class_Infomation";
         }
         #endregion
 
