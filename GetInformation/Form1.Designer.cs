@@ -72,6 +72,8 @@ namespace GetInformation
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.buttonCreate = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.txt_StudentName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewData)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -404,7 +406,7 @@ namespace GetInformation
             // textBoxName
             // 
             this.textBoxName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxName.Location = new System.Drawing.Point(45, 129);
+            this.textBoxName.Location = new System.Drawing.Point(45, 174);
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(328, 24);
             this.textBoxName.TabIndex = 35;
@@ -414,11 +416,11 @@ namespace GetInformation
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(42, 106);
+            this.label10.Location = new System.Drawing.Point(42, 151);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(52, 18);
+            this.label10.Size = new System.Drawing.Size(113, 18);
             this.label10.TabIndex = 36;
-            this.label10.Text = "Name";
+            this.label10.Text = "Class\'s Name";
             // 
             // label11
             // 
@@ -432,7 +434,7 @@ namespace GetInformation
             // 
             // buttonInput
             // 
-            this.buttonInput.Location = new System.Drawing.Point(45, 188);
+            this.buttonInput.Location = new System.Drawing.Point(45, 231);
             this.buttonInput.Name = "buttonInput";
             this.buttonInput.Size = new System.Drawing.Size(142, 40);
             this.buttonInput.TabIndex = 38;
@@ -478,6 +480,8 @@ namespace GetInformation
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Controls.Add(this.txt_StudentName);
             this.groupBox5.Controls.Add(this.buttonInput);
             this.groupBox5.Controls.Add(this.label11);
             this.groupBox5.Controls.Add(this.label10);
@@ -489,6 +493,25 @@ namespace GetInformation
             this.groupBox5.TabIndex = 40;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Information";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(42, 84);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(127, 18);
+            this.label12.TabIndex = 40;
+            this.label12.Text = "Student\'s Name";
+            // 
+            // txt_StudentName
+            // 
+            this.txt_StudentName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_StudentName.Location = new System.Drawing.Point(45, 107);
+            this.txt_StudentName.Name = "txt_StudentName";
+            this.txt_StudentName.Size = new System.Drawing.Size(328, 24);
+            this.txt_StudentName.TabIndex = 39;
+            this.txt_StudentName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Form1
             // 
@@ -564,6 +587,8 @@ namespace GetInformation
         private System.Windows.Forms.Button buttonCreate;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox txt_StudentName;
     }
 }
 
