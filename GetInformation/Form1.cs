@@ -27,6 +27,7 @@ namespace GetInformation
 
         // Khởi tạo list Student (bao gồm các class Student)
         public List<Student> listStudent;
+        public Dictionary<string, string> classInfo;
 
         SqlDataAdapter adapter = new SqlDataAdapter();
 
@@ -80,7 +81,24 @@ namespace GetInformation
                     buttondatabase.ForeColor = Color.LimeGreen;
                     buttondatabase.Text = "Connect to Database";
                     sqlcon = null;
-                }   
+                }
+
+                SqlCommand sqlCmd = new SqlCommand();
+                sqlCmd.CommandType = CommandType.Text;
+                sqlCmd.CommandText = String.Format(@"SELECT * FROM Class_Infomation");
+                sqlCmd.Connection = sqlcon;
+
+                SqlDataReader reader = sqlCmd.ExecuteReader();
+
+                classInfo = new Dictionary<string, string>();
+
+                // Truyền dữ liệu từ SQL vào List Class
+                while (reader.Read())
+                {
+                    classInfo.Add(reader.GetString(1).Trim(), reader.GetString(0).Trim());
+                }
+                reader.Close();
+
             }
             catch (Exception ex)
             {
@@ -93,7 +111,7 @@ namespace GetInformation
         // Nút bấm xóa dữ liệu trong datagridview 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            SqlCommand sqlCmd = new SqlCommand("DELETE FROM "+ textBoxTable.Text +" WHERE CLass_ID = '"+ textBoxID.Text +"'", sqlcon);
+            SqlCommand sqlCmd = new SqlCommand("DELETE FROM "+ textBoxTable.Text +" WHERE Class_ID = '"+ textBoxID.Text +"'", sqlcon);
             sqlCmd.ExecuteNonQuery();
             loadData();
             textBoxID.Text = textBoxName.Text = "";
@@ -135,7 +153,7 @@ namespace GetInformation
             try
             {
                 // Code tạo đối tượng thực thi truy vấn
-                SqlCommand sqlCmd = new SqlCommand("CREATE TABLE " + textBoxTable.Text + " (Name NVARCHAR(50), ID NCHAR(10))", sqlcon);
+                SqlCommand sqlCmd = new SqlCommand("CREATE TABLE " + textBoxTable.Text + " (Student_Name NVARCHAR(50), Class_Name NVARCHAR(50), Class_ID NCHAR(10))", sqlcon);
                 sqlCmd.ExecuteNonQuery();
 
                 MessageBox.Show("Success!");
@@ -166,23 +184,67 @@ namespace GetInformation
         {
             if (textBoxName.Text != "" || textBoxID.Text != "")
             {
-                try
+                if (classInfo.ContainsKey(textBoxID.Text))
                 {
-                    SqlCommand sqlCmd = new SqlCommand("INSERT INTO " + textBoxTable.Text + " (Class_Name, Class_ID) VALUES ('" + textBoxName.Text + "', '" + textBoxID.Text + "')", sqlcon);
-                    sqlCmd.ExecuteNonQuery();
-
-                    // Đưa dữ liệu lên dataGridView             
-                    dataGridViewData.Invoke(new System.Action(() =>
+                    if (classInfo[textBoxID.Text] == textBoxName.Text)
                     {
-                        loadData();
-                        dataGridViewData.FirstDisplayedScrollingRowIndex = dataGridViewData.RowCount - 1;
-                    }));
-                    textBoxName.Text = textBoxID.Text = "";
-                    
+                        AutoClosingMessageBox.Show("This tag has been used by this class!", "", 2000);
+                    }
+                    else
+                    {
+                        DialogResult dialogResult = MessageBox.Show($"This tag is already in used by class {textBoxName.Text}! Do you want to replace?", 
+                                                                     "", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            try
+                            {
+                                SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ({txt_StudentName.Text}, {textBoxName.Text}, {textBoxID.Text})", sqlcon);
+                                sqlCmd.ExecuteNonQuery();
+
+                                // Đưa dữ liệu lên dataGridView             
+                                dataGridViewData.Invoke(new System.Action(() =>
+                                {
+                                    loadData();
+                                    dataGridViewData.FirstDisplayedScrollingRowIndex = dataGridViewData.RowCount - 1;
+                                }));
+                                textBoxName.Text = textBoxID.Text = "";
+
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                        }
+                        else if (dialogResult == DialogResult.No)
+                        {
+                            textBoxName.Text = "";
+                        }
+                    }
                 }
-                catch (Exception ex)
+                else if (classInfo.ContainsValue(textBoxName.Text))
                 {
-                    MessageBox.Show(ex.Message);
+                    AutoClosingMessageBox.Show("This class already exists in the database!", "", 2000);
+                }
+                else
+                {
+                    try
+                    {
+                        SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ({txt_StudentName.Text}, {textBoxName.Text}, {textBoxID.Text})", sqlcon);
+                        sqlCmd.ExecuteNonQuery();
+
+                        // Đưa dữ liệu lên dataGridView             
+                        dataGridViewData.Invoke(new System.Action(() =>
+                        {
+                            loadData();
+                            dataGridViewData.FirstDisplayedScrollingRowIndex = dataGridViewData.RowCount - 1;
+                        }));
+                        textBoxName.Text = textBoxID.Text = "";
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
             else MessageBox.Show("Incomplete information!");
@@ -347,5 +409,35 @@ namespace GetInformation
             Name = name;
             ID = id;
         }
+    }
+
+    public class AutoClosingMessageBox
+    {
+        System.Threading.Timer _timeoutTimer;
+        string _caption;
+        AutoClosingMessageBox(string text, string caption, int timeout)
+        {
+            _caption = caption;
+            _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
+                null, timeout, System.Threading.Timeout.Infinite);
+            using (_timeoutTimer)
+                MessageBox.Show(text, caption);
+        }
+        public static void Show(string text, string caption, int timeout)
+        {
+            new AutoClosingMessageBox(text, caption, timeout);
+        }
+        void OnTimerElapsed(object state)
+        {
+            IntPtr mbWnd = FindWindow("#32770", _caption); // lpClassName is #32770 for MessageBox
+            if (mbWnd != IntPtr.Zero)
+                SendMessage(mbWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+            _timeoutTimer.Dispose();
+        }
+        const int WM_CLOSE = 0x0010;
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
     }
 }
