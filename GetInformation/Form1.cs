@@ -85,7 +85,7 @@ namespace GetInformation
 
                 SqlCommand sqlCmd = new SqlCommand();
                 sqlCmd.CommandType = CommandType.Text;
-                sqlCmd.CommandText = String.Format(@"SELECT * FROM Class_Infomation");
+                sqlCmd.CommandText = String.Format(@"SELECT * FROM Class_Information");
                 sqlCmd.Connection = sqlcon;
 
                 SqlDataReader reader = sqlCmd.ExecuteReader();
@@ -95,7 +95,7 @@ namespace GetInformation
                 // Truyền dữ liệu từ SQL vào List Class
                 while (reader.Read())
                 {
-                    classInfo.Add(reader.GetString(1).Trim(), reader.GetString(0).Trim());
+                    classInfo.Add(reader.GetString(2).Trim(), reader.GetString(0).Trim());
                 }
                 reader.Close();
 
@@ -186,19 +186,19 @@ namespace GetInformation
             {
                 if (classInfo.ContainsKey(textBoxID.Text))
                 {
-                    if (classInfo[textBoxID.Text] == textBoxName.Text)
+                    if (classInfo[textBoxID.Text] == txt_StudentName.Text)
                     {
-                        AutoClosingMessageBox.Show("This tag has been used by this class!", "", 2000);
+                        AutoClosingMessageBox.Show("This tag has been used by this student!", "", 2000);
                     }
                     else
                     {
-                        DialogResult dialogResult = MessageBox.Show($"This tag is already in used by class {textBoxName.Text}! Do you want to replace?", 
+                        DialogResult dialogResult = MessageBox.Show($"This tag is already in used by {txt_StudentName.Text}! Do you want to replace?", 
                                                                      "", MessageBoxButtons.YesNo);
                         if (dialogResult == DialogResult.Yes)
                         {
                             try
                             {
-                                SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ({txt_StudentName.Text}, {textBoxName.Text}, {textBoxID.Text})", sqlcon);
+                                SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ('{txt_StudentName.Text}', '{textBoxName.Text}', '{textBoxID.Text}')", sqlcon);
                                 sqlCmd.ExecuteNonQuery();
 
                                 // Đưa dữ liệu lên dataGridView             
@@ -221,15 +221,15 @@ namespace GetInformation
                         }
                     }
                 }
-                else if (classInfo.ContainsValue(textBoxName.Text))
+                else if (classInfo.ContainsValue(txt_StudentName.Text))
                 {
-                    AutoClosingMessageBox.Show("This class already exists in the database!", "", 2000);
+                    AutoClosingMessageBox.Show("This tag already exists in the database!", "", 2000);
                 }
                 else
                 {
                     try
                     {
-                        SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ({txt_StudentName.Text}, {textBoxName.Text}, {textBoxID.Text})", sqlcon);
+                        SqlCommand sqlCmd = new SqlCommand($"INSERT INTO {textBoxTable.Text} (Student_Name, Class_Name, Class_ID) VALUES ('{txt_StudentName.Text}', '{textBoxName.Text}', '{textBoxID.Text}')", sqlcon);
                         sqlCmd.ExecuteNonQuery();
 
                         // Đưa dữ liệu lên dataGridView             
@@ -254,8 +254,9 @@ namespace GetInformation
         {
             int i = dataGridViewData.CurrentRow.Index;
 
-            textBoxName.Text = dataGridViewData.Rows[i].Cells[0].Value.ToString();
-            textBoxID.Text = dataGridViewData.Rows[i].Cells[1].Value.ToString();
+            txt_StudentName.Text = dataGridViewData.Rows[i].Cells[0].Value.ToString();
+            textBoxName.Text = dataGridViewData.Rows[i].Cells[1].Value.ToString();
+            textBoxID.Text = dataGridViewData.Rows[i].Cells[2].Value.ToString();
         }
 
         // Nút bấm lưu file excel
